@@ -1,0 +1,42 @@
+name: 'Merge transi-store translation branch'
+description: 'Merge a translation branch for projects configured in transi-store.config.json'
+author: 'transi-store'
+branding:
+  icon: 'git-merge'
+  color: 'blue'
+
+inputs:
+  branch:
+    description: 'Branch slug to merge'
+    required: true
+  api-key:
+    description: 'transi-store API key'
+    required: true
+  config:
+    description: 'Path to transi-store.config.json (relative to the workspace)'
+    required: false
+    default: 'transi-store.config.json'
+  cli-version:
+    description: 'Version of @transi-store/cli to install (npm dist-tag or semver)'
+    required: false
+    default: 'latest'
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '24'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Merge translation branch
+      shell: bash
+      env:
+        TRANSI_STORE_API_KEY: ${{ inputs.api-key }}
+      run: |
+        npx --yes @transi-store/cli@${{ inputs.cli-version }} merge \
+          --config "${{ inputs.config }}" \
+          --branch "${{ inputs.branch }}"
