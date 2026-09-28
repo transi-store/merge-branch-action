@@ -34,9 +34,14 @@ runs:
 
     - name: Merge translation branch
       shell: bash
+      # Inputs are passed through env vars and never interpolated in `run:`:
+      # a branch name such as `x$(id)` would otherwise be executed by bash.
       env:
         TRANSI_STORE_API_KEY: ${{ inputs.api-key }}
+        BRANCH: ${{ inputs.branch }}
+        CONFIG: ${{ inputs.config }}
+        CLI_VERSION: ${{ inputs.cli-version }}
       run: |
-        npx --yes @transi-store/cli@${{ inputs.cli-version }} merge \
-          --config "${{ inputs.config }}" \
-          --branch "${{ inputs.branch }}"
+        npx --yes "@transi-store/cli@${CLI_VERSION}" merge \
+          --config "$CONFIG" \
+          --branch "$BRANCH"
