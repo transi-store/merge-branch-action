@@ -9,6 +9,10 @@ inputs:
   branch:
     description: 'Branch slug to merge'
     required: true
+  into:
+    description: 'Branch slug to merge into; main, master or an empty value merge into main'
+    required: false
+    default: ''
   api-key:
     description: 'transi-store API key'
     required: true
@@ -39,9 +43,11 @@ runs:
       env:
         TRANSI_STORE_API_KEY: ${{ inputs.api-key }}
         BRANCH: ${{ inputs.branch }}
+        INTO: ${{ inputs.into }}
         CONFIG: ${{ inputs.config }}
         CLI_VERSION: ${{ inputs.cli-version }}
       run: |
         npx --yes "@transi-store/cli@${CLI_VERSION}" merge \
           --config "$CONFIG" \
-          --branch "$BRANCH"
+          --branch "$BRANCH" \
+          ${INTO:+--into "$INTO"}
